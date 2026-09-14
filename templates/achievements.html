@@ -30,23 +30,22 @@
                 <h1>Achievements</h1>
 
                 <div class="experience-grid">
-                    <article class="experience-card">
-                        <span class="experience-category">Nasional &middot; 2025</span>
-                        <h2>{{ ach1 }}</h2>
-                        <p class="experience-description">
-                            Finalis Olimpiade Sains Nasional Bidang Astronomi 2024.
+                    {% for achievement in achievement_list %}
+                        <article class="experience-card">
+                            <span class="experience-category">{{ achievement.category }} &middot; {{ achievement.year }}</span>
+                            <h2>{{ achievement.title }}</h2>
+                            <p class="experience-description">
+                                {{ achievement.description }}
+                            </p>
+                            {% if achievement.issuer %}
+                                <p class="experience-status">{{ achievement.issuer }}</p>
+                            {% endif %}
+                        </article>
+                    {% empty %}
+                        <p class="empty-state">
+                            Belum ada pencapaian yang ditambahkan.
                         </p>
-                        <p class="experience-status">Penyelenggara: Platform Online</p>
-                    </article>
-
-                    <article class="experience-card">
-                        <span class="experience-category">Kompetisi &middot; 2024</span>
-                        <h2>Finalis OGG ITB 2024</h2>
-                        <p class="experience-description">
-                            Finalis OGG ITB English Speech 2024.
-                        </p>
-                        <p class="experience-status">Universitas Indonesia</p>
-                    </article>
+                    {% endfor %}
                 </div>
             </div>
         </section>

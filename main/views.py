@@ -22,24 +22,29 @@ def show_experience(request):
     }
     return render(request, "experience.html", context)
 
-def show_skills(request):
-    context = {
-        "progskill": "Python & Java",
-        "progskill_desc": "Pembuatan kode yang komprehensif, cepat dan efisien.",
-    }
-    return render(request, "skills.html", context)
+from django.shortcuts import render
+from .models import Experience, Achievement, Education, Skill
 
 def show_achievements(request):
+    achievement_list = Achievement.objects.all()
     context = {
-        "ach1": "Finalis Olimpiade Sains Nasional Astronomi 2024",
+        'name': 'Razan Alif Azhima',
+        'achievement_list': achievement_list,
     }
-    return render(request, "achievements.html", context)
+    return render(request, 'achievements.html', context)
 
 def show_education(request):
+    education_list = Education.objects.all()
     context = {
-        "SMA": "SMA Al-Azhar 19 Ciracas",
-        "Uni": "Universitas Indonesia",
-        "study_prog": "S1 Sistem Informasi",
-        "npm": "2506632942",
+        'name': 'Razan Alif Azhima',
+        'education_list': education_list,
     }
-    return render(request, "education.html", context)
+    return render(request, 'education.html', context)
+
+def show_skills(request):
+    skill_list = Skill.objects.all()
+    context = {
+        'name': 'Razan Alif Azhima',
+        'skill_list': skill_list,
+    }
+    return render(request, 'skills.html', context)

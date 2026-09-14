@@ -28,25 +28,24 @@
             <div class="container">
                 <p class="section-kicker">Riwayat Akademis</p>
                 <h1>Education</h1>
-
                 <div class="experience-grid">
-                    <article class="experience-card">
-                        <span class="experience-category">2024 &ndash; Sekarang</span>
-                        <h2>{{ Uni }}</h2>
-                        <p class="experience-description">
-                            {{ study_prog }} &middot; Fakultas Ilmu Komputer
+                    {% for edu in education_list %}
+                        <article class="experience-card">
+                            <span class="experience-category">{{ edu.period }}</span>
+                            <h2>{{ edu.institution }}</h2>
+                            <h3>{{ edu.degree_or_major }}</h3>
+                            {% if edu.faculty %}
+                                <p><strong>{{ edu.faculty }}</strong></p>
+                            {% endif %}
+                            <p class="experience-description">
+                                {{ edu.status }}
+                            </p>
+                        </article>
+                    {% empty %}
+                        <p class="empty-state">
+                            Belum ada riwayat pendidikan yang ditambahkan.
                         </p>
-                        <p class="experience-status">Mahasiswa Aktif (NPM: {{ npm }})</p>2025 &ndash;
-                    </article>
-
-                    <article class="experience-card">
-                        <span class="experience-category">2021 &ndash; 2024</span>
-                        <h2>{{ SMA }}</h2>
-                        <p class="experience-description">
-                            Peminatan Matematika dan Ilmu Pengetahuan Alam Teknik (MIPA-Teknik).
-                        </p>
-                        <p class="experience-status">Lulus</p>
-                    </article>
+                    {% endfor %}
                 </div>
             </div>
         </section>

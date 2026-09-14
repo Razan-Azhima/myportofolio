@@ -30,29 +30,19 @@
                 <h1>Skills</h1>
 
                 <div class="experience-grid">
-                    <article class="experience-card">
-                        <span class="experience-category">Backend</span>
-                        <h2>{{ progskill }}</h2>
-                        <p class="experience-description">
-                            {{ progskill_desc }}
+                    {% for skill in skill_list %}
+                        <article class="experience-card">
+                            <span class="experience-category">{{ skill.get_category_display }}</span>
+                            <h2>{{ skill.name }}</h2>
+                            <p class="experience-description">
+                                {{ skill.description }}
+                            </p>
+                        </article>
+                    {% empty %}
+                        <p class="empty-state">
+                            Belum ada keahlian yang ditambahkan.
                         </p>
-                    </article>
-
-                    <article class="experience-card">
-                        <span class="experience-category">Frontend</span>
-                        <h2>HTML</h2>
-                        <p class="experience-description">
-                            Pembuatan antarmuka web responsif dengan sintaks semantik dan gaya CSS kustom.
-                        </p>
-                    </article>
-
-                    <article class="experience-card">
-                        <span class="experience-category">Tools & Workflow</span>
-                        <h2>Git & GitHub</h2>
-                        <p class="experience-description">
-                            Manajemen repositori, kontrol versi kode, dan kolaborasi tim.
-                        </p>
-                    </article>
+                    {% endfor %}
                 </div>
             </div>
         </section>
