@@ -18,6 +18,7 @@
                 <a href="{% url 'main:show_experience' %}">Experience</a>
                 <a href="{% url 'main:show_skills' %}">Skills</a>
                 <a href="{% url 'main:show_achievements' %}">Achievements</a>
+                <a href="{% url 'main:show_education' %}">Education</a>
             </nav>
         </div>
     </header>
@@ -31,7 +32,7 @@
                 <div class="experience-grid">
                     <article class="experience-card">
                         <span class="experience-category">Nasional &middot; 2025</span>
-                        <h2>Finalis OSN 2024 Astronomi</h2>
+                        <h2>{{ ach1 }}</h2>
                         <p class="experience-description">
                             Finalis Olimpiade Sains Nasional Bidang Astronomi 2024.
                         </p>

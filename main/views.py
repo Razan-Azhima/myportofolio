@@ -34,3 +34,12 @@ def show_achievements(request):
         "ach1": "Finalis Olimpiade Sains Nasional Astronomi 2024",
     }
     return render(request, "achievements.html", context)
+
+def show_education(request):
+    context = {
+        "SMA": "SMA Al-Azhar 19 Ciracas",
+        "Uni": "Universitas Indonesia",
+        "study_prog": "S1 Sistem Informasi",
+        "npm": "2506632942",
+    }
+    return render(request, "education.html", context)
