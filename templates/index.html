@@ -12,10 +12,12 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a  href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
             <nav>
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_skills' %}">Skills</a>
+                <a href="{% url 'main:show_achievements' %}">Achievements</a>
             </nav>
         </div>
     </header>
@@ -36,7 +38,7 @@
                     <dl class="meta-list">
                         <div class="meta-row">
                             <dt>NPM</dt>
-                            <dd>{{ name }}</dd>
+                            <dd>{{ npm }}</dd>
                         </div>
                         <div class="meta-row">
                             <dt>Program</dt>
@@ -49,6 +51,12 @@
                         <a href="mailto:razan.alif@ui.ac.id" class="social-link">Email</a>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <section>
+            <div>
+                
             </div>
         </section>
     </main>

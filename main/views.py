@@ -21,3 +21,16 @@ def show_experience(request):
         "experience_list": Experience.objects.all(),
     }
     return render(request, "experience.html", context)
+
+def show_skills(request):
+    context = {
+        "progskill": "Python & Java",
+        "progskill_desc": "Pembuatan kode yang komprehensif, cepat dan efisien.",
+    }
+    return render(request, "skills.html", context)
+
+def show_achievements(request):
+    context = {
+        "ach1": "Finalis Olimpiade Sains Nasional Astronomi 2024",
+    }
+    return render(request, "achievements.html", context)
