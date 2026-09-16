@@ -1,52 +1,53 @@
 from django.forms import ModelForm, TextInput, Textarea, URLInput
 
-from main.models import Project
+from main.models import Education
 
-class ProjectForm(ModelForm):
+class EducationForm(ModelForm):
     class Meta:
-        model = Project
+        model = Education
         fields = [
-            "title",
-            "description",
-            "tech_stack",
-            "project_url",
-            "project_image_url",
+            "institution",
+            "degree_or_major",
+            "faculty",
+            "period",
+            "status",
         ]
 
         labels = {
-            "title": "Nama Proyek",
-            "description": "Deskripsi Proyek",
-            "tech_stack": "Teknologi yang Digunakan",
-            "project_url": "URL Proyek",
-            "project_image_url": "URL Gambar Proyek",
+            "institution": "Tempat Pendidikan",
+            "degree_or_major": "Prodi/Keminatan",
+            "faculty": "Fakultas/Sekolah", 
+            "period": "Periode",
+            "status": "Status",
         }
 
         widgets = {
-            "title": TextInput(
+            "institution": TextInput(
                 attrs={
-                    "placeholder": "Portfolio Website",
+                    "placeholder": "-",
                     "maxlength": 255,
                 }
             ),
-            "description": Textarea(
+            "degree_or_major": Textarea(
                 attrs={
-                    "placeholder": "Ceritakan Proyekmu",
+                    "placeholder": "-",
                     "rows": 3,
                 }
             ),
-            "tech_stack": TextInput(
+            "faculty": Textarea(
                 attrs={
-                    "placeholder": "Django, Python, HTML, CSS",
+                    "placeholder": "-",
+                    "rows": 3,
                 }
             ),
-            "project_url": URLInput(
+            "period": TextInput(
                 attrs={
-                    "placeholder": "https://github.com/kakBurhan/burhanquestv4",
+                    "placeholder": "-",
                 }
             ),
-            "project_image_url": URLInput(
+            "status": TextInput(
                 attrs={
-                    "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
+                    "placeholder": "-",
                 }
             ),
         }
