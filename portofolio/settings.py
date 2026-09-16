@@ -78,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'portofolio.wsgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://razan-alif-myportofolio.pws.cs.ui.ac.id/",
+     "https://razan-alif-myportofolio.pws.cs.ui.ac.id/",
 ]
 
 
