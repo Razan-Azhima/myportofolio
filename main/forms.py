@@ -1,6 +1,6 @@
-from django.forms import ModelForm, TextInput, Textarea, URLInput
+from django.forms import ModelForm, TextInput, Textarea, URLInput, Select
 
-from main.models import Education
+from main.models import Education, Skill
 
 class EducationForm(ModelForm):
     class Meta:
@@ -48,6 +48,37 @@ class EducationForm(ModelForm):
             "status": TextInput(
                 attrs={
                     "placeholder": "-",
+                }
+            ),
+        }
+
+class SkillForm(ModelForm):
+    class Meta:
+        model = Skill
+        fields = [
+            "category",
+            "name",
+            "description",
+        ]
+        
+        labels = {
+            "category": "Kategori",
+            "name": "Nama",
+            "description": "Deskripsi", 
+        }
+
+        widgets = {
+            "category": Select(),
+            "name": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "row": 3,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "maxlength": 255,
                 }
             ),
         }

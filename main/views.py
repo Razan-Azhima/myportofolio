@@ -3,10 +3,13 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from main.forms import EducationForm
+from main.forms import EducationForm, SkillForm
 from main.models import Achievement, Education, Experience, Skill
 
 # Create your views here.
+
+# Show
+
 def show_main(request):
     context = {
         "name": "Razan Alif Azhima",
@@ -22,7 +25,7 @@ def show_main(request):
 
 def show_experience(request):
     context = {
-        "name": "Razan",
+        "name": "Razan Alif Azhima",
         "experience_list": Experience.objects.all(),
     }
     return render(request, "experience.html", context)
@@ -49,16 +52,6 @@ def show_education(request):
     }
     return render(request, 'education.html', context)
 
-def delete_education(request, education_id):
-    education = get_object_or_404(Education, pk=education_id)
-
-    if request.method == "POST":
-        education.delete()
-        messages.success(request, "Education berhasil dihapus!")
-        return redirect("main:show_education")
-
-    return redirect("main:show_education")
-
 def show_skills(request):
     skill_list = Skill.objects.all()
     context = {
@@ -67,6 +60,7 @@ def show_skills(request):
     }
     return render(request, 'skills.html', context)
 
+# Create
 
 def create_education(request):
     form = EducationForm(request.POST or None)
@@ -81,6 +75,34 @@ def create_education(request):
         "form": form,
     }
     return render(request, "education_form.html", context)
+
+# Create
+
+def create_skill(request):
+    form = SkillForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Skill baru berhasil ditambahkan!")
+        return redirect("main:show_skills")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+    }
+    return render(request, "education_form.html", context)
+
+# Delete
+
+def delete_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    if request.method == "POST":
+        education.delete()
+        messages.success(request, "Education berhasil dihapus!")
+        return redirect("main:show_education")
+
+    return redirect("main:show_education")
 
 def get_educations_json(request):
     title_query = request.GET.get("title", "").strip()
