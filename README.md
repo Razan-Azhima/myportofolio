@@ -40,3 +40,31 @@ python manage.py makemigrations -> Django detects new changes dan membuat berkas
 python manage.py migrate
 Django eksekusi perintah SQL sehingga kolom "is_active" benar-benar terbuat di dalam basis data
 
+### TUGAS 3
+
+1. Alasan memakai ModelForm:
+    - Prinsip dont repeat yourself (dry) -> render field form otomatis jadi tidak perlu nulis ulang 1 per 1 di HTML
+    - data validation -> langsung memvalidasi data saat kita input di formnya
+    alasan memakai {% csrf_token %}:
+    - CSRF protection: mencegah Cross-Site Request Forgery (CSRF)
+    - kasih session cookie (seperti nilai rahasia) -> django check token cocok
+
+2. Keunggulan JSON Dibandingkan XML dalam Pengembangan Web Modern
+    - Ukuran kecil, dibanding dengan XML
+    - mendukung JSON
+    - lebih cepat
+    - lebih mudah dibaca
+
+3. Alur Pengembalian Data Portofolio dalam Bentuk JSON & Pentingnya Serialisasi:
+    1. permintaan dari client
+    2. routing url
+    3. pengambilan data
+    4. proses serialisasi
+    5. pengiriman respons
+    6. penerimaan data
+
+    Alasan perlunya proses serialiasi:
+    - struktur data Django amat kompleks
+    - Http hanya bisa send data berupa teks
+
+AI Disclosure: Saya memakai LLM Claude dan Gemini sebagian besar untuk mengurus style.css, sisanya berupa menganalisis mengapa kode buatan saya error dan mengkoreksi secara manual sesuai dengan saran AI.
