@@ -1,4 +1,4 @@
-import uuid
+import uuid, re
 from django.db import models
 
 class Experience(models.Model):
@@ -22,6 +22,22 @@ class Experience(models.Model):
 
     def __str__(self):
         return self.title
+    
+    @property
+    def thumbnail_direct_url(self):
+        if not self.thumbnail:
+            return ""
+
+        # Mengambil File ID dari berbagai format link Google Drive
+        drive_pattern = r'(?:file/d/|id=|d/)([a-zA-Z0-9_-]{25,})'
+        match = re.search(drive_pattern, self.thumbnail)
+
+        if match:
+            file_id = match.group(1)
+            return f"https://lh3.googleusercontent.com/d/{file_id}"
+        
+        # Jika bukan link Google Drive (misal link gambar biasa), kembalikan URL asli
+        return self.thumbnail
     
     @property
     def is_ongoing(self):

@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from main.forms import EducationForm, SkillForm
+from main.forms import EducationForm, SkillForm, AchievementForm, ExperienceForm
 from main.models import Achievement, Education, Experience, Skill
 
 # Create your views here.
@@ -92,6 +92,36 @@ def create_skill(request):
     }
     return render(request, "skill_form.html", context)
 
+def create_achievement(request):
+    form = AchievementForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Achievement baru berhasil ditambahkan!")
+        return redirect("main:show_achievements")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+        "is_edit": False,
+    }
+    return render(request, "achievement_form.html", context)
+
+def create_experience(request):
+    form = ExperienceForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Experience baru berhasil ditambahkan!")
+        return redirect("main:show_experience")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+        "is_edit": False,
+    }
+    return render(request, "experience_form.html", context)
+
 # Update
 
 def update_skill(request, skill_id):
@@ -126,6 +156,38 @@ def update_education(request, education_id):
     }
     return render(request, "education_form.html", context)
 
+def update_achievement(request, achievement_id):
+    achievement = get_object_or_404(Achievement, pk=achievement_id)
+    form = AchievementForm(request.POST or None, instance=achievement)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Achievement berhasil diperbarui!")
+        return redirect("main:show_achievements")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+        "is_edit": True,
+    }
+    return render(request, "achievement_form.html", context)
+
+def update_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+    form = ExperienceForm(request.POST or None, instance=experience)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Experience berhasil diperbarui!")
+        return redirect("main:show_experience")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+        "is_edit": True,
+    }
+    return render(request, "experience_form.html", context)
+
 # Delete
 
 def delete_education(request, education_id):
@@ -148,6 +210,26 @@ def delete_skill(request, skill_id):
 
     return redirect("main:show_skills")
 
+def delete_achievement(request, achievement_id):
+    achievement = get_object_or_404(Achievement, pk=achievement_id)
+
+    if request.method == "POST":
+        achievement.delete()
+        messages.success(request, "Achievement berhasil dihapus!")
+        return redirect("main:show_achievements")
+
+    return redirect("main:show_achievements")
+
+def delete_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        experience.delete()
+        messages.success(request, "Experience berhasil dihapus!")
+        return redirect("main:show_experience")
+
+    return redirect("main:show_experience")
+
 # get JSON 
 
 def get_educations_json(request):
@@ -159,3 +241,33 @@ def get_educations_json(request):
 
     educations_json = serializers.serialize("json", educations)
     return HttpResponse(educations_json, content_type="application/json")
+
+def get_achievements_json(request):
+    title_query = request.GET.get("title", "").strip()
+    achievements = Achievement.objects.all()
+
+    if title_query:
+        achievements = achievements.filter(title__icontains=title_query)
+
+    achievements_json = serializers.serialize("json", achievements)
+    return HttpResponse(achievements_json, content_type="application/json")
+
+def get_skills_json(request):
+    name_query = request.GET.get("name", "").strip()
+    skills = Skill.objects.all()
+
+    if name_query:
+        skills = skills.filter(name__icontains=name_query)
+
+    skills_json = serializers.serialize("json", skills)
+    return HttpResponse(skills_json, content_type="application/json")
+
+def get_experiences_json(request):
+    title_query = request.GET.get("title", "").strip()
+    experiences = Experience.objects.all()
+
+    if title_query:
+        experiences = experiences.filter(title__icontains=title_query)
+
+    experiences_json = serializers.serialize("json", experiences)
+    return HttpResponse(experiences_json, content_type="application/json")

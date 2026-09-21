@@ -8,6 +8,11 @@
             <div class="container">
                 <p class="section-kicker">Penghargaan & Sertifikasi</p>
                 <h1>Achievements</h1>
+                <a href="{% url 'main:create_achievement' %}"
+                       class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Achievement
+                    </a>
 
                 <div class="experience-grid">
                     {% for achievement in achievement_list %}
@@ -20,6 +25,18 @@
                             {% if achievement.issuer %}
                                 <p class="experience-status">{{ achievement.issuer }}</p>
                             {% endif %}
+                            <div class="project-card-actions">
+                                <div class="project-actions">
+                                    <a href="{% url 'main:update_achievement' achievement.id %}" class="button button--secondary">Update</a>
+
+                                    <form method="post"
+                                          action="{% url 'main:delete_achievement' achievement.id %}"
+                                          onsubmit="return confirm('Yakin ingin menghapus kecapaian ini?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="button button--danger">Hapus</button>
+                                    </form>
+                                </div>
+                            </div>
                         </article>
                     {% empty %}
                         <p class="empty-state">

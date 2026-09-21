@@ -1,0 +1,43 @@
+<p class="experience-status">
+    <button type="button"
+            class="button button-danger"
+            popovertarget="delete-achievement-{{ achievement.id }}"
+            aria-label="Hapus {{ achievement.title }}"
+            title="Hapus proyek">
+        Hapus Education
+    </button>
+</p>
+<div id="delete-achievement-{{ achievement.id }}"
+     class="achievement-delete-modal"
+     popover="auto"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="delete-achievement-title-{{ achievement.id }}">
+    <button type="button"
+            class="achievement-delete-modal__backdrop"
+            popovertarget="delete-achievement-{{ achievement.id }}"
+            popovertargetaction="hide"
+            aria-label="Tutup konfirmasi hapus"></button>
+    <div class="achievement-delete-modal__content">
+        <button type="button"
+                class="achievement-delete-modal__close"
+                popovertarget="delete-achievement-{{ achievement.id }}"
+                popovertargetaction="hide"
+                aria-label="Tutup konfirmasi hapus">×</button>
+        <h2 id="delete-achievement-title-{{ achievement.id }}">Hapus Kecapaian?</h2>
+        <p>
+            Apakah Anda yakin ingin menghapus
+            <strong>{{ achievement.title }}</strong>?
+        </p>
+        <div class="achievement-delete-modal__actions">
+            <button type="button"
+                    class="button button-secondary"
+                    popovertarget="delete-achievement-{{ achievement.id }}"
+                    popovertargetaction="hide">Batal</button>   
+            <form method="post" action="{% url 'main:delete_education' achievement.id %}">
+                {% csrf_token %}
+                <button type="submit" class="button button-danger">Ya, Hapus</button>
+            </form>
+        </div>
+    </div>
+</div>

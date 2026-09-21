@@ -1,6 +1,6 @@
-from django.forms import ModelForm, TextInput, Textarea, URLInput, Select
+from django.forms import ModelForm, TextInput, Textarea, URLInput, Select, DateTimeInput
 
-from main.models import Education, Skill
+from main.models import Education, Skill, Achievement, Experience
 
 class EducationForm(ModelForm):
     class Meta:
@@ -79,6 +79,105 @@ class SkillForm(ModelForm):
                 attrs={
                     "placeholder": "-",
                     "maxlength": 255,
+                }
+            ),
+        }
+
+class AchievementForm(ModelForm):
+    class Meta:
+        model = Achievement
+        fields = [
+            "title",
+            "category",
+            "year",
+            "description",
+            "issuer",
+        ]
+        
+        labels = {
+            "title": "Judul",
+            "category": "Kategori",
+            "year": "Tahun",
+            "description": "Deskripsi", 
+            "issuer": "Pengisu",
+        }
+
+        widgets = {
+            "title": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "row": 3,
+                }
+            ),
+            "category": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "row": 3,
+                }
+            ),
+            "year": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "maxlength": 4,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "maxlength": 255,
+                }
+            ),
+            "issuer": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "maxlength": 100,
+                }
+            ),
+        }
+
+class ExperienceForm(ModelForm):
+    class Meta:
+        model = Experience
+        fields = [
+            "title",
+            "description",
+            "category",
+            "thumbnail",
+            "ended_at",
+        ]
+        
+        labels = {
+            "title": "Judul",
+            "description": "Deskripsi",
+            "category": "Kategori",
+            "thumbnail": "Thumbnail",
+            "ended_at": "Berakhir pada",
+        }
+
+        widgets = {
+            "title": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "row": 3,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": "-",
+                    "row": 3,
+                }
+            ),
+            "category": Select(),
+            "thumbnail": Textarea(
+                attrs={
+                    "placeholder": "https://drive.google.com/file/...",
+                    "maxlength": 255,
+                }
+            ),
+            "ended_at": DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                    "placeholder": "-",
                 }
             ),
         }

@@ -7,11 +7,21 @@
         <section class="experience-section" id="experience">
             <div class="container">
                 <p class="section-kicker">Perjalanan saya sejauh ini</p>
-                <h1>Experience</h1>
-
+                    <h1>Experience</h1>
+                    <a href="{% url 'main:create_experience' %}"
+                       class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Experience
+                    </a>
+                
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
+                            {% if experience.thumbnail %}
+                                <img src="{{ experience.thumbnail_direct_url }}" 
+                                     alt="{{ experience.title }}" 
+                                     class="experience-thumbnail">
+                            {% endif %}
                             <span class="experience-category">
                                 {{ experience.get_category_display }}
                             </span>
@@ -25,6 +35,18 @@
                             {% else %}
                                 <p class="experience-status">Selesai</p>
                             {% endif %}
+                            <div class="project-card-actions">
+                                <div class="project-actions">
+                                    <a href="{% url 'main:update_experience' experience.id %}" class="button button--secondary">Update</a>
+
+                                    <form method="post"
+                                          action="{% url 'main:delete_experience' experience.id %}"
+                                          onsubmit="return confirm('Yakin ingin menghapus experience ini?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="button button--danger">Hapus</button>
+                                    </form>
+                                </div>
+                            </div>
                         </article>
                     {% empty %}
                         <p class="empty-state">
