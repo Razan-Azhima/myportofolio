@@ -35,6 +35,8 @@
                             <p class="experience-description">{{ education.period }} &middot; {{ education.status }}</p>
                             <div class="project-card-actions">
                                 <div class="project-actions">
+                                    <a href="{% url 'main:update_education' education.id %}" class="button button--secondary">Update</a>
+
                                     <form method="post"
                                           action="{% url 'main:delete_education' education.id %}"
                                           onsubmit="return confirm('Yakin ingin menghapus riwayat pendidikan ini?');">

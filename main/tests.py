@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -111,6 +113,116 @@ class MainTest(TestCase):
         response = self.client.get(reverse("main:show_education"))
         self.assertContains(response, "Belum ada riwayat pendidikan yang ditambahkan.")
 
+    def test_education_search_filter(self):
+        Education.objects.create(
+            institution="Institut Teknologi Bandung",
+            degree_or_major="Teknik Informatika",
+            faculty="STEI",
+            period="2020 – 2024",
+            status="Lulus",
+        )
+        response = self.client.get(reverse("main:show_education"), {"title": "Indonesia"})
+        self.assertContains(response, self.education.institution)
+        self.assertNotContains(response, "Institut Teknologi Bandung")
+
+    def test_create_education_page_get(self):
+        response = self.client.get(reverse("main:create_education"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "education_form.html")
+        self.assertContains(response, "Add New Education")
+
+    def test_create_education_post_valid(self):
+        response = self.client.post(reverse("main:create_education"), {
+            "institution": "Universitas Gadjah Mada",
+            "degree_or_major": "Teknik Elektro",
+            "faculty": "Fakultas Teknik",
+            "period": "2021 – 2025",
+            "status": "Lulus",
+        })
+        self.assertRedirects(response, reverse("main:show_education"))
+        self.assertTrue(
+            Education.objects.filter(institution="Universitas Gadjah Mada").exists()
+        )
+
+    def test_create_education_post_invalid(self):
+        initial_count = Education.objects.count()
+        response = self.client.post(reverse("main:create_education"), {
+            "institution": "",
+            "degree_or_major": "",
+            "faculty": "",
+            "period": "",
+            "status": "",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Education.objects.count(), initial_count)
+
+    def test_update_education_page_get(self):
+        response = self.client.get(
+            reverse("main:update_education", args=[self.education.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "education_form.html")
+        self.assertContains(response, "Edit Education")
+        self.assertContains(response, self.education.institution)
+
+    def test_update_education_post_valid(self):
+        response = self.client.post(
+            reverse("main:update_education", args=[self.education.id]),
+            {
+                "institution": "Universitas Indonesia",
+                "degree_or_major": "S1 Sistem Informasi",
+                "faculty": "Fakultas Ilmu Komputer",
+                "period": "2024 – Sekarang",
+                "status": "Mahasiswa Aktif (Update)",
+            },
+        )
+        self.assertRedirects(response, reverse("main:show_education"))
+        self.education.refresh_from_db()
+        self.assertEqual(self.education.status, "Mahasiswa Aktif (Update)")
+
+    def test_update_nonexistent_education_returns_404(self):
+        response = self.client.get(
+            reverse("main:update_education", args=["00000000-0000-0000-0000-000000000000"])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_education_post(self):
+        response = self.client.post(
+            reverse("main:delete_education", args=[self.education.id])
+        )
+        self.assertRedirects(response, reverse("main:show_education"))
+        self.assertFalse(Education.objects.filter(id=self.education.id).exists())
+
+    def test_delete_education_get_does_not_delete(self):
+        response = self.client.get(
+            reverse("main:delete_education", args=[self.education.id])
+        )
+        self.assertRedirects(response, reverse("main:show_education"))
+        self.assertTrue(Education.objects.filter(id=self.education.id).exists())
+
+    def test_get_educations_json(self):
+        response = self.client.get(reverse("main:get_educations_json"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["fields"]["institution"], self.education.institution)
+
+    def test_get_educations_json_with_filter(self):
+        Education.objects.create(
+            institution="Institut Teknologi Bandung",
+            degree_or_major="Teknik Informatika",
+            faculty="STEI",
+            period="2020 – 2024",
+            status="Lulus",
+        )
+        response = self.client.get(
+            reverse("main:get_educations_json"), {"title": "Bandung"}
+        )
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["fields"]["institution"], "Institut Teknologi Bandung")
+
     # --- Skill Model & View Tests ---
     def test_skill_model(self):
         self.assertEqual(str(self.skill), "Python / Django")
@@ -127,3 +239,64 @@ class MainTest(TestCase):
         Skill.objects.all().delete()
         response = self.client.get(reverse("main:show_skills"))
         self.assertContains(response, "Belum ada keahlian yang ditambahkan.")
+
+    def test_create_skill_page_get(self):
+        response = self.client.get(reverse("main:create_skill"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "skill_form.html")
+        self.assertContains(response, "Add New Skill")
+
+    def test_create_skill_post_valid(self):
+        response = self.client.post(reverse("main:create_skill"), {
+            "name": "React",
+            "category": "frontend",
+            "description": "Membangun antarmuka pengguna berbasis komponen.",
+        })
+        self.assertRedirects(response, reverse("main:show_skills"))
+        self.assertTrue(Skill.objects.filter(name="React").exists())
+
+    def test_create_skill_post_invalid(self):
+        initial_count = Skill.objects.count()
+        response = self.client.post(reverse("main:create_skill"), {
+            "name": "",
+            "category": "backend",
+            "description": "",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Skill.objects.count(), initial_count)
+
+    def test_update_skill_page_get(self):
+        response = self.client.get(reverse("main:update_skill", args=[self.skill.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "skill_form.html")
+        self.assertContains(response, "Edit Skill")
+        self.assertContains(response, self.skill.name)
+
+    def test_update_skill_post_valid(self):
+        response = self.client.post(
+            reverse("main:update_skill", args=[self.skill.id]),
+            {
+                "name": "Python / Django",
+                "category": "backend",
+                "description": "Pengembangan REST API tingkat lanjut.",
+            },
+        )
+        self.assertRedirects(response, reverse("main:show_skills"))
+        self.skill.refresh_from_db()
+        self.assertEqual(self.skill.description, "Pengembangan REST API tingkat lanjut.")
+
+    def test_update_nonexistent_skill_returns_404(self):
+        response = self.client.get(
+            reverse("main:update_skill", args=["00000000-0000-0000-0000-000000000000"])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_skill_post(self):
+        response = self.client.post(reverse("main:delete_skill", args=[self.skill.id]))
+        self.assertRedirects(response, reverse("main:show_skills"))
+        self.assertFalse(Skill.objects.filter(id=self.skill.id).exists())
+
+    def test_delete_skill_get_does_not_delete(self):
+        response = self.client.get(reverse("main:delete_skill", args=[self.skill.id]))
+        self.assertRedirects(response, reverse("main:show_skills"))
+        self.assertTrue(Skill.objects.filter(id=self.skill.id).exists())

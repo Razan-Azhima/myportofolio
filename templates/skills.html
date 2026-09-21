@@ -7,7 +7,15 @@
         <section class="experience-section" id="skills">
             <div class="container">
                 <p class="section-kicker">Keahlian & Kemampuan</p>
-                <h1>Skills</h1>
+
+                <div class="project-header">
+                    <h1>Skills</h1>
+                    <a href="{% url 'main:create_skill' %}"
+                       class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Skill
+                    </a>
+                </div>
 
                 <div class="experience-grid">
                     {% for skill in skill_list %}
@@ -17,6 +25,18 @@
                             <p class="experience-description">
                                 {{ skill.description }}
                             </p>
+                            <div class="project-card-actions">
+                                <div class="project-actions">
+                                    <a href="{% url 'main:update_skill' skill.id %}" class="button button--secondary">Update</a>
+
+                                    <form method="post"
+                                          action="{% url 'main:delete_skill' skill.id %}"
+                                          onsubmit="return confirm('Yakin ingin menghapus keahlian ini?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="button button--danger">Hapus</button>
+                                    </form>
+                                </div>
+                            </div>
                         </article>
                     {% empty %}
                         <p class="empty-state">

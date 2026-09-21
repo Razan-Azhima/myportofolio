@@ -73,10 +73,9 @@ def create_education(request):
     context = {
         "name": "Razan Alif Azhima",
         "form": form,
+        "is_edit": False,
     }
     return render(request, "education_form.html", context)
-
-# Create
 
 def create_skill(request):
     form = SkillForm(request.POST or None)
@@ -89,6 +88,41 @@ def create_skill(request):
     context = {
         "name": "Razan Alif Azhima",
         "form": form,
+        "is_edit": False,
+    }
+    return render(request, "skill_form.html", context)
+
+# Update
+
+def update_skill(request, skill_id):
+    skill = get_object_or_404(Skill, pk=skill_id)
+    form = SkillForm(request.POST or None, instance=skill)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Skill berhasil diperbarui!")
+        return redirect("main:show_skills")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+        "is_edit": True,
+    }
+    return render(request, "skill_form.html", context)
+
+def update_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+    form = EducationForm(request.POST or None, instance=education)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Education berhasil diperbarui!")
+        return redirect("main:show_education")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+        "is_edit": True,
     }
     return render(request, "education_form.html", context)
 
@@ -103,6 +137,18 @@ def delete_education(request, education_id):
         return redirect("main:show_education")
 
     return redirect("main:show_education")
+
+def delete_skill(request, skill_id):
+    skill = get_object_or_404(Skill, pk=skill_id)
+
+    if request.method == "POST":
+        skill.delete()
+        messages.success(request, "Skill berhasil dihapus!")
+        return redirect("main:show_skills")
+
+    return redirect("main:show_skills")
+
+# get JSON 
 
 def get_educations_json(request):
     title_query = request.GET.get("title", "").strip()

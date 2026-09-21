@@ -309,6 +309,12 @@ h1, .brand {
 
 /* projects */
 
+.project-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 .education-header {
     width: 100%;
     display: flex;
