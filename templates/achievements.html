@@ -8,11 +8,13 @@
             <div class="container">
                 <p class="section-kicker">Penghargaan & Sertifikasi</p>
                 <h1>Achievements</h1>
+                {% if user.is_superuser or is_editor %} 
                 <a href="{% url 'main:create_achievement' %}"
-                       class="button project-add-button">
-                        <span aria-hidden="true">+</span>
-                        Tambah Achievement
-                    </a>
+                    class="button project-add-button">
+                    <span aria-hidden="true">+</span>
+                    Tambah Achievement
+                </a>
+                {% endif %}
 
                 <div class="experience-grid">
                     {% for achievement in achievement_list %}
@@ -27,6 +29,7 @@
                             {% endif %}
                             <div class="project-card-actions">
                                 <div class="project-actions">
+                                    {% if user.is_superuser or is_editor %} 
                                     <a href="{% url 'main:update_achievement' achievement.id %}" class="button button--secondary">Update</a>
 
                                     <form method="post"
@@ -35,6 +38,7 @@
                                         {% csrf_token %}
                                         <button type="submit" class="button button--danger">Hapus</button>
                                     </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         </article>

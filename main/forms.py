@@ -1,4 +1,5 @@
 from django.forms import ModelForm, TextInput, Textarea, URLInput, Select, DateTimeInput
+from django.db.models import ManyToManyField
 
 from main.models import Education, Skill, Achievement, Experience
 

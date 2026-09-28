@@ -1,16 +1,85 @@
 from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.shortcuts import redirect, render
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied  
+
+import datetime
 
 from main.forms import EducationForm, SkillForm, AchievementForm, ExperienceForm
 from main.models import Achievement, Education, Experience, Skill
 
 # Create your views here.
 
+# Helper
+
+def is_editor(user):
+    return user.is_authenticated and (
+        user.is_superuser or user.groups.filter(name="Editor").exists()
+    )
+
+# Authentication
+
+def register(request):
+    form = UserCreationForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Akun berhasil dibuat. Silakan login.")
+        return redirect("main:login")
+
+    context = {
+        "name": "Razan Alif Azhima",
+        "form": form,
+    }
+    return render(request, "register.html", context)
+
+def login_user(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        login(request, form.get_user())
+        response = redirect("main:show_main")
+        response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        return response
+
+    context = {
+        "name": "Burhan",
+        "form": form,
+    }
+    return render(request, "login.html", context)
+
+def logout_user(request):
+    logout(request)
+    response = redirect("main:show_main")
+    response.delete_cookie('last_login')
+    return response
+
+# Toggle Star
+
+# Tanpa cek is_superuser: semua akun yang sudah login boleh memberi star
+@login_required(login_url="/login/")
+def toggle_star_experience(request, experience_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
+    exp = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        if exp.starred_by.filter(pk=request.user.pk).exists():
+            exp.starred_by.remove(request.user)
+        else:
+            exp.starred_by.add(request.user)
+
+    return redirect("main:show_experience")
+
 # Show
 
 def show_main(request):
+    last_login = request.COOKIES.get('last_login', 'Belum ada sesi login / Cookie tidak ditemukan')
     context = {
         "name": "Razan Alif Azhima",
         "npm": "2506632942",
@@ -19,14 +88,15 @@ def show_main(request):
             "CS student at Universitas Indonesia for longer than planned, now a familiar (and slightly dreaded) face among Fasilkom students as a teaching assistant across several courses"
             # "pada pengembangan perangkat lunak dan pendidikan."
         ),
+        "last_login": last_login,
     }
     return render(request, "index.html", context)
-
 
 def show_experience(request):
     context = {
         "name": "Razan Alif Azhima",
         "experience_list": Experience.objects.all(),
+        "is_editor": is_editor(request.user),
     }
     return render(request, "experience.html", context)
 
@@ -62,7 +132,10 @@ def show_skills(request):
 
 # Create
 
+@login_required(login_url="/login/")
 def create_education(request):
+    if not is_editor(request.user):
+        raise PermissionDenied
     form = EducationForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -77,7 +150,10 @@ def create_education(request):
     }
     return render(request, "education_form.html", context)
 
+@login_required(login_url="/login/")
 def create_skill(request):
+    if not is_editor(request.user):
+        raise PermissionDenied
     form = SkillForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -92,7 +168,10 @@ def create_skill(request):
     }
     return render(request, "skill_form.html", context)
 
+@login_required(login_url="/login/")
 def create_achievement(request):
+    if not is_editor(request.user):
+        raise PermissionDenied
     form = AchievementForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -107,7 +186,10 @@ def create_achievement(request):
     }
     return render(request, "achievement_form.html", context)
 
+@login_required(login_url="/login/")
 def create_experience(request):
+    if not is_editor(request.user):
+        raise PermissionDenied
     form = ExperienceForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -124,7 +206,10 @@ def create_experience(request):
 
 # Update
 
+@login_required(login_url="/login/")
 def update_skill(request, skill_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     skill = get_object_or_404(Skill, pk=skill_id)
     form = SkillForm(request.POST or None, instance=skill)
 
@@ -140,7 +225,10 @@ def update_skill(request, skill_id):
     }
     return render(request, "skill_form.html", context)
 
+@login_required(login_url="/login/")
 def update_education(request, education_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     education = get_object_or_404(Education, pk=education_id)
     form = EducationForm(request.POST or None, instance=education)
 
@@ -156,7 +244,10 @@ def update_education(request, education_id):
     }
     return render(request, "education_form.html", context)
 
+@login_required(login_url="/login/")
 def update_achievement(request, achievement_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     achievement = get_object_or_404(Achievement, pk=achievement_id)
     form = AchievementForm(request.POST or None, instance=achievement)
 
@@ -172,7 +263,10 @@ def update_achievement(request, achievement_id):
     }
     return render(request, "achievement_form.html", context)
 
+@login_required(login_url="/login/")
 def update_experience(request, experience_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     experience = get_object_or_404(Experience, pk=experience_id)
     form = ExperienceForm(request.POST or None, instance=experience)
 
@@ -190,7 +284,10 @@ def update_experience(request, experience_id):
 
 # Delete
 
+@login_required(login_url="/login/")
 def delete_education(request, education_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     education = get_object_or_404(Education, pk=education_id)
 
     if request.method == "POST":
@@ -200,7 +297,10 @@ def delete_education(request, education_id):
 
     return redirect("main:show_education")
 
+@login_required(login_url="/login/")
 def delete_skill(request, skill_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     skill = get_object_or_404(Skill, pk=skill_id)
 
     if request.method == "POST":
@@ -210,7 +310,10 @@ def delete_skill(request, skill_id):
 
     return redirect("main:show_skills")
 
+@login_required(login_url="/login/")
 def delete_achievement(request, achievement_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     achievement = get_object_or_404(Achievement, pk=achievement_id)
 
     if request.method == "POST":
@@ -220,7 +323,10 @@ def delete_achievement(request, achievement_id):
 
     return redirect("main:show_achievements")
 
+@login_required(login_url="/login/")
 def delete_experience(request, experience_id):
+    if not is_editor(request.user):
+        raise PermissionDenied
     experience = get_object_or_404(Experience, pk=experience_id)
 
     if request.method == "POST":

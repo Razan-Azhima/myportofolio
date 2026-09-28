@@ -9,11 +9,13 @@
                 <p class="section-kicker">Riwayat pendidikan saya</p>
                 <div class="project-header">
                     <h1>Education</h1>
+                    {% if user.is_superuser or is_editor %} 
                     <a href="{% url 'main:create_education' %}"
                        class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Pendidikan
                     </a>
+                    {% endif %}
                 </div>
                 <form method="get"
                       action="{% url 'main:show_education' %}"
@@ -35,6 +37,7 @@
                             <p class="experience-description">{{ education.period }} &middot; {{ education.status }}</p>
                             <div class="project-card-actions">
                                 <div class="project-actions">
+                                    {% if user.is_superuser or is_editor %} 
                                     <a href="{% url 'main:update_education' education.id %}" class="button button--secondary">Update</a>
 
                                     <form method="post"
@@ -43,6 +46,7 @@
                                         {% csrf_token %}
                                         <button type="submit" class="button button--danger">Hapus</button>
                                     </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         </article>

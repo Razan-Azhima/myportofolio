@@ -1,5 +1,6 @@
 import uuid, re
 from django.db import models
+from django.contrib.auth.models import User
 
 class Experience(models.Model):
     # Model Experience yang sudah Anda buat sebelumnya
@@ -19,6 +20,7 @@ class Experience(models.Model):
     thumbnail = models.URLField(blank=True, null=True)
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(blank=True, null=True)
+    starred_by = models.ManyToManyField(User, related_name="starred_experience", blank=True)
 
     def __str__(self):
         return self.title
@@ -51,6 +53,7 @@ class Achievement(models.Model):
     year = models.CharField(max_length=10)        # Contoh: "2025"
     description = models.TextField()
     issuer = models.CharField(max_length=255, blank=True, null=True) # Contoh: "ITB"
+    # starred_by = models.ManyToManyField(User, related_name="starred_achievement", blank=True)
 
     def __str__(self):
         return self.title
@@ -63,6 +66,7 @@ class Education(models.Model):
     faculty = models.CharField(max_length=255, blank=True, null=True) # Contoh: "Fakultas Ilmu Komputer"
     period = models.CharField(max_length=50)            # Contoh: "2024 – Sekarang"
     status = models.CharField(max_length=255)           # Contoh: "Mahasiswa Aktif (NPM: ...)"
+    # starred_by = models.ManyToManyField(User, related_name="starred_education", blank=True)
 
     def __str__(self):
         return self.institution
@@ -80,6 +84,7 @@ class Skill(models.Model):
     name = models.CharField(max_length=255)            # Contoh: "Python / Django", "Git & GitHub"
     category = models.CharField(max_length=50, choices=SKILL_CATEGORY_CHOICES, default='backend')
     description = models.TextField()
+    # starred_by = models.ManyToManyField(User, related_name="starred_skill", blank=True)
 
     def __str__(self):
         return self.name

@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block meta %}
-    <title>{% if is_edit %}Edit{% else %}Add{% endif %} Achievement - {{ name }}</title>
+    <title>Login - {{ name }}</title>
 {% endblock meta %}
 {% block content %}
     <main>
         <section class="experience-section">
             <div class="container">
-                <h1>{% if is_edit %}Edit Achievement{% else %}Add New Achievement{% endif %}</h1>
-                <form method="post"
-                      action="{% if is_edit %}{% url 'main:update_achievement' form.instance.pk %}{% else %}{% url 'main:   ' %}{% endif %}"
-                      class="project-form">
+                <h1>Login</h1>
+                {% for message in messages %}
+                    <p class="form-message">{{ message }}</p>
+                {% endfor %}
+                <form method="post" action="{% url 'main:login' %}" class="project-form">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-group">
@@ -20,11 +21,12 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="button">
-                        {% if is_edit %}Simpan Perubahan{% else %}Tambah Achievement{% endif %}
-                    </button>
-                    <a href="{% url 'main:show_achievements' %}" class="button button-secondary">Batal</a>
+                    {% for error in form.non_field_errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                    <button type="submit" class="button">Login</button>
                 </form>
+                <p>Belum punya akun? <a href="{% url 'main:register' %}">Daftar di sini</a>.</p>
             </div>
         </section>
     </main>

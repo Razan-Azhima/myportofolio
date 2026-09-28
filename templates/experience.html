@@ -8,11 +8,13 @@
             <div class="container">
                 <p class="section-kicker">Perjalanan saya sejauh ini</p>
                     <h1>Experience</h1>
+                    {% if user.is_superuser or is_editor %} 
                     <a href="{% url 'main:create_experience' %}"
                        class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Experience
                     </a>
+                    {% endif %}
                 
                 <div class="experience-grid">
                     {% for experience in experience_list %}
@@ -36,15 +38,21 @@
                                 <p class="experience-status">Selesai</p>
                             {% endif %}
                             <div class="project-card-actions">
-                                <div class="project-actions">
-                                    <a href="{% url 'main:update_experience' experience.id %}" class="button button--secondary">Update</a>
+                                <div class="project-card-actions">
+                                    <div class="project-actions">
+                                        {% if user.is_superuser or is_editor %}
+                                            <a href="{% url 'main:update_experience' experience.id %}" class="button button--secondary">Update</a>
 
-                                    <form method="post"
-                                          action="{% url 'main:delete_experience' experience.id %}"
-                                          onsubmit="return confirm('Yakin ingin menghapus experience ini?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="button button--danger">Hapus</button>
-                                    </form>
+                                            <form method="post"
+                                                action="{% url 'main:delete_experience' experience.id %}"
+                                                onsubmit="return confirm('Yakin ingin menghapus experience ini?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="button button--danger">Hapus</button>
+                                            </form>
+
+                                            {% include "components/experience_star.html" with experience=experience %}
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </article>

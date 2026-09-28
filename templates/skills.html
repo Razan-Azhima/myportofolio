@@ -10,11 +10,13 @@
 
                 <div class="project-header">
                     <h1>Skills</h1>
+                    {% if user.is_superuser or is_editor %} 
                     <a href="{% url 'main:create_skill' %}"
                        class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Skill
                     </a>
+                    {% endif %}
                 </div>
 
                 <div class="experience-grid">
@@ -27,6 +29,7 @@
                             </p>
                             <div class="project-card-actions">
                                 <div class="project-actions">
+                                    {% if user.is_superuser or is_editor %} 
                                     <a href="{% url 'main:update_skill' skill.id %}" class="button button--secondary">Update</a>
 
                                     <form method="post"
@@ -35,6 +38,7 @@
                                         {% csrf_token %}
                                         <button type="submit" class="button button--danger">Hapus</button>
                                     </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         </article>
