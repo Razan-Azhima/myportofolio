@@ -1,5 +1,7 @@
 from django.forms import ModelForm, TextInput, Textarea, URLInput, Select, DateTimeInput
 from django.db.models import ManyToManyField
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 
 from main.models import Education, Skill, Achievement, Experience
 
@@ -146,39 +148,60 @@ class ExperienceForm(ModelForm):
             "thumbnail",
             "ended_at",
         ]
-        
+
         labels = {
             "title": "Judul",
             "description": "Deskripsi",
             "category": "Kategori",
-            "thumbnail": "Thumbnail",
-            "ended_at": "Berakhir pada",
+            "thumbnail": "Thumbnail (URL gambar / link Google Drive)",
+            "ended_at": "Berakhir pada (kosongkan jika masih berlangsung)",
         }
 
         widgets = {
-            "title": Textarea(
+            "title": TextInput(
                 attrs={
                     "placeholder": "-",
-                    "row": 3,
+                    "maxlength": 255,
                 }
             ),
             "description": Textarea(
                 attrs={
                     "placeholder": "-",
-                    "row": 3,
+                    "rows": 3,
                 }
             ),
             "category": Select(),
-            "thumbnail": Textarea(
+            "thumbnail": URLInput(
                 attrs={
                     "placeholder": "https://drive.google.com/file/...",
-                    "maxlength": 255,
+                    "maxlength": 200,  # sesuai default max_length URLField
                 }
             ),
             "ended_at": DateTimeInput(
+                format="%Y-%m-%dT%H:%M",  # supaya nilai lama terisi di input datetime-local saat update
                 attrs={
                     "type": "datetime-local",
-                    "placeholder": "-",
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["ended_at"].input_formats = [
+            "%Y-%m-%dT%H:%M",
+            "%Y-%m-%dT%H:%M:%S",
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d %H:%M",
+        ]
+
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise ValidationError("Judul tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_description(self):
+        description = strip_tags(self.cleaned_data["description"]).strip()
+        if not description:
+            raise ValidationError("Deskripsi tidak boleh hanya berisi tag HTML.")
+        return description

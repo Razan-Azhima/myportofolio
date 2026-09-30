@@ -4,7 +4,8 @@ from main.views import (
     show_main, show_experience, show_skills, create_skill, create_experience, show_achievements, show_education, 
     create_education, get_educations_json, delete_education, update_education, delete_skill, 
     update_skill, create_achievement, delete_achievement, update_achievement, delete_experience,
-    update_experience, get_achievements_json, get_skills_json, get_experiences_json, register, login_user, logout_user, toggle_star_experience
+    update_experience, get_achievements_json, get_skills_json, get_experiences_json, register, login_user, logout_user, toggle_star_experience,
+    create_experience_ajax
 )
 
 app_name = "main"
@@ -22,6 +23,8 @@ path(
     path("register/", register, name="register"),
     path("login/", login_user, name="login"),
     path("logout/", logout_user, name="logout"),
+
+    path("experience/add-ajax/", create_experience_ajax, name="create_experience_ajax"),
 
     path("experience/", show_experience, name="show_experience"),
     path("experience/add", create_experience, name="create_experience"),
