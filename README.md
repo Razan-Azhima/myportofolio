@@ -68,3 +68,19 @@ Django eksekusi perintah SQL sehingga kolom "is_active" benar-benar terbuat di d
     - Http hanya bisa send data berupa teks
 
 AI Disclosure: Saya memakai LLM Claude dan Gemini sebagian besar untuk mengurus style.css, sisanya berupa menganalisis mengapa kode buatan saya error dan mengkoreksi secara manual sesuai dengan saran AI.
+
+### TUGAS 7 — Django REST Framework
+
+REST API untuk data experience tersedia di `/api/v1/experiences/`. Endpoint daftar
+mendukung `GET` dan `POST`; endpoint `/api/v1/experiences/<uuid>/` mendukung
+`GET`, `PUT`, `PATCH`, dan `DELETE`; endpoint
+`/api/v1/experiences/<uuid>/star/` menerima `POST` untuk memberi atau membatalkan
+star.
+
+Data dibentuk dan divalidasi oleh `ExperienceSerializer`. Semua pengunjung dapat
+membaca data, editor dapat mengelola experience, dan pengguna yang sudah login
+dapat memberi star. API menggunakan session authentication, sehingga request
+yang mengubah data dari browser harus menyertakan token CSRF. Browsable API
+tersedia di endpoint API; halaman login DRF ada di `/api-auth/`.
+
+Jalankan pengujian API dengan `python manage.py test main.tests_api`.
