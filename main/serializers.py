@@ -8,7 +8,6 @@ class ExperienceSerializer(serializers.ModelSerializer):
     thumbnail_direct_url = serializers.ReadOnlyField()
     star_count = serializers.SerializerMethodField()
     is_starred = serializers.SerializerMethodField()
-    starred_by_names = serializers.SerializerMethodField()
 
     class Meta:
         model = Experience
@@ -23,7 +22,6 @@ class ExperienceSerializer(serializers.ModelSerializer):
             "ended_at",
             "star_count",
             "is_starred",
-            "starred_by_names",
         ]
         read_only_fields = [
             "id",
@@ -31,7 +29,6 @@ class ExperienceSerializer(serializers.ModelSerializer):
             "started_at",
             "star_count",
             "is_starred",
-            "starred_by_names",
         ]
 
     def validate_title(self, value):
@@ -58,6 +55,3 @@ class ExperienceSerializer(serializers.ModelSerializer):
         if request is None or not request.user.is_authenticated:
             return False
         return request.user in obj.starred_by.all()
-
-    def get_starred_by_names(self, obj):
-        return ", ".join(user.username for user in obj.starred_by.all())

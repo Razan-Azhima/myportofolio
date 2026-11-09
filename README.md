@@ -67,20 +67,45 @@ Django eksekusi perintah SQL sehingga kolom "is_active" benar-benar terbuat di d
     - struktur data Django amat kompleks
     - Http hanya bisa send data berupa teks
 
-AI Disclosure: Saya memakai LLM Claude dan Gemini sebagian besar untuk mengurus style.css, sisanya berupa menganalisis mengapa kode buatan saya error dan mengkoreksi secara manual sesuai dengan saran AI.
-
 ### TUGAS 7 — Django REST Framework
 
-REST API untuk data experience tersedia di `/api/v1/experiences/`. Endpoint daftar
-mendukung `GET` dan `POST`; endpoint `/api/v1/experiences/<uuid>/` mendukung
-`GET`, `PUT`, `PATCH`, dan `DELETE`; endpoint
-`/api/v1/experiences/<uuid>/star/` menerima `POST` untuk memberi atau membatalkan
-star.
+1.  REST (REpresentational State Transfer) adalah gaya arsitektur perangkat lunak yang mendeskripsikan antarmuka seragam di antara komponen-komponen yang terpisah secara fisik,
+    sering kali melalui Internet dalam arsitektur klien-server.
+    Constraints/Batasan: 
+    - Client-Server Separation
+    - Stateless: setiap request memiliki semua informasi yang dibutuhkan
+    - Cacheable: respons harus menyatakan apakah boleh di-cache
+    - Uniform Interface: resource diidentifikasi lewat URL, dimanipulasi lewat representasi, pesan bersifat self-descriptive, dan (idealnya) memakai hypermedia
+    - Layered System & Code on Demand
 
-Data dibentuk dan divalidasi oleh `ExperienceSerializer`. Semua pengunjung dapat
-membaca data, editor dapat mengelola experience, dan pengguna yang sudah login
-dapat memberi star. API menggunakan session authentication, sehingga request
-yang mengubah data dari browser harus menyertakan token CSRF. Browsable API
-tersedia di endpoint API; halaman login DRF ada di `/api-auth/`.
+    untuk JSON, itu hanya format DATA. API hanya mengembalikan JSON bisa saja melanggar prinsip REST
 
-Jalankan pengujian API dengan `python manage.py test main.tests_api`.
+    Aspek                       PUT                                         PATCH
+    Semantik                Menganti seluruh resource            mengubah sebagian resource
+    Payload                 representasi lengkap                 hanya field yang berubah
+    Field tak terkirim      Dianggap hilang                      dibiarkan seperti semula
+    idempoten               Ya                                    tidak dijamin
+
+2.  Serializer adalah lapisan yang menjembatani objek Python/model Django dan format yang bisa dikirim lewat jaringan (biasanya JSON)
+    1) serialisasi: model/queryset → tipe data primitif → JSON (untuk respons)
+    2) Deserialisasi: JSON → tipe data Python tervalidasi → objek/model (untuk request).
+    3) Validasi: memeriksa tipe, panjang, keunikan
+
+3.  Autentikasi vs Otorisasi
+
+Perbedaan               Autentikasi (Authentication)                Otorisasi (Authorization)
+Pertanyaan              basically, siapa kamu?                      apa yang boleh kamu lakukan?
+Hasil                   Mengisi request.user dan request.auth       Mengizinkan atau menolak akses
+komponen DRF            authentication_classes                      permission_classes
+respons gagal           401 Unauthorized                            403 Forbidden
+
+4.  SessionAuthentication mengandalkan cookie sesi (sessionid) yang dikirim otomatis oleh browser pada setiap request ke domain tersebut,
+    termasuk request yang dipicu situs lain. Contoh dasar serangan CSRF:
+    1) Pengguna login di bank.com
+    2) Ia membuka cesillia.com, yang berisi form/skrip hidden: POST/bank.com/api/transfer
+    3) Browser menyertakan cookie sesi secara otomatis, sehingga server mengira itu permintaan sah pengguna
+
+    Token CSRF memutuf serangan ini karena  nilainya tidak dapat dibaca oleh website lain
+    karena itu DRF perlu CSRF untuk metode yang mengubah data
+
+AI Disclosure: Saya memakai LLM Claude dan Gemini sebagian besar untuk mengurus style.css, sisanya berupa menganalisis mengapa kode buatan saya error dan mengkoreksi secara manual sesuai dengan saran AI.

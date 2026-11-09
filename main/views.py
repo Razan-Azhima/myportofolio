@@ -23,6 +23,9 @@ def is_editor(user):
         user.is_superuser or user.groups.filter(name="Editor").exists()
     )
 
+def is_portfolio_owner(user):
+    return user.is_authenticated and user.is_superuser
+
 # Authentication
 
 def register(request):
@@ -65,8 +68,6 @@ def logout_user(request):
 # Tanpa cek is_superuser: semua akun yang sudah login boleh memberi star
 @login_required(login_url="/login/")
 def toggle_star_experience(request, experience_id):
-    if not is_editor(request.user):
-        raise PermissionDenied
     exp = get_object_or_404(Experience, pk=experience_id)
 
     if request.method == "POST":
@@ -146,10 +147,9 @@ def show_skills(request):
 
 @require_POST
 def create_experience_ajax(request):
-    # is_editor() mengecek user: superuser atau anggota group Editor
-    if not is_editor(request.user):
+    if not is_portfolio_owner(request.user):
         return JsonResponse(
-            {"message": "Hanya superuser atau editor yang dapat menambahkan experience."},
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan experience."},
             status=403,
         )
 
@@ -219,7 +219,7 @@ def create_achievement(request):
 
 @login_required(login_url="/login/")
 def create_experience(request):
-    if not is_editor(request.user):
+    if not is_portfolio_owner(request.user):
         raise PermissionDenied
     form = ExperienceForm(request.POST or None)
 
@@ -356,7 +356,7 @@ def delete_achievement(request, achievement_id):
 
 @login_required(login_url="/login/")
 def delete_experience(request, experience_id):
-    if not is_editor(request.user):
+    if not is_portfolio_owner(request.user):
         raise PermissionDenied
     experience = get_object_or_404(Experience, pk=experience_id)
 
