@@ -83,8 +83,8 @@ class ExperienceAPITest(APITestCase):
         )
         delete_response = self.client.delete(self.detail_url)
 
-        self.assertEqual(create_response.status_code, 403)
-        self.assertEqual(delete_response.status_code, 403)
+        self.assertEqual(create_response.status_code, 401)
+        self.assertEqual(delete_response.status_code, 401)
         self.assertEqual(Experience.objects.count(), initial_count)
         self.experience.refresh_from_db()
         self.assertEqual(self.experience.title, "Asisten Dosen")
@@ -154,6 +154,33 @@ class ExperienceAPITest(APITestCase):
         self.assertFalse(Experience.objects.filter(pk=created_id).exists())
         self.assertEqual(Experience.objects.count(), 1)
 
+    def test_owner_can_create_with_token_and_revoke_it_on_logout(self):
+        token_response = self.client.post(
+            reverse("api:api_token_auth"),
+            {
+                "username": self.owner.username,
+                "password": self.owner_password,
+            },
+        )
+        self.assertEqual(token_response.status_code, 200)
+
+        token_client = APIClient()
+        token_client.credentials(
+            HTTP_AUTHORIZATION=f"Token {token_response.data['token']}"
+        )
+        create_response = token_client.post(
+            self.list_url, self.payload(), format="json"
+        )
+        self.assertEqual(create_response.status_code, 201)
+
+        logout_response = token_client.post(reverse("api:api_logout"))
+        self.assertEqual(logout_response.status_code, 204)
+
+        rejected_response = token_client.post(
+            self.list_url, self.payload(), format="json"
+        )
+        self.assertEqual(rejected_response.status_code, 401)
+
     def test_invalid_text_is_rejected_without_database_changes(self):
         self.client.force_authenticate(user=self.owner)
         initial_count = Experience.objects.count()
@@ -216,7 +243,7 @@ class ExperienceAPITest(APITestCase):
     def test_anonymous_user_cannot_star(self):
         response = self.client.post(self.star_url)
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
         self.assertFalse(self.experience.starred_by.exists())
 
     def test_star_endpoint_only_accepts_post(self):

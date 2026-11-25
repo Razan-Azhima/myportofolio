@@ -108,4 +108,4 @@ respons gagal           401 Unauthorized                            403 Forbidde
     Token CSRF memutuf serangan ini karena  nilainya tidak dapat dibaca oleh website lain
     karena itu DRF perlu CSRF untuk metode yang mengubah data
 
-AI Disclosure: Saya memakai LLM Claude dan Gemini sebagian besar untuk mengurus style.css, sisanya berupa menganalisis mengapa kode buatan saya error dan mengkoreksi secara manual sesuai dengan saran AI.
+
